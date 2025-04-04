@@ -24,8 +24,22 @@
   <meta name="apple-mobile-web-app-title" content="travel_ai_mobile">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
+  <!-- Theme and PWA enhancements -->
+<meta name="theme-color" content="#0175C2">
+<meta name="msapplication-navbutton-color" content="#0175C2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Travel AI Mobile">
+<link rel="apple-touch-icon" href="icons/Icon-192.png">
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Fallback favicon for legacy browsers -->
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 
   <title>travel_ai_mobile</title>
   <link rel="manifest" href="manifest.json">
@@ -86,6 +100,26 @@
       bottom: 0;
       right: 0;
     }
+body::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ffffff;
+  background-image: url('icons/Icon-512.png'); /* or splash/img/logo.png if you prefer */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 150px 150px;
+  z-index: 9999;
+  animation: fadeOut 1s ease 1s forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
   </style>
   <script id="splash-screen-script">
     function removeSplashFromWeb() {
@@ -97,12 +131,6 @@
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
 </head>
 <body>
-  <picture id="splash">
-      <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x" media="(prefers-color-scheme: light)">
-      <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
-      <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="">
-  </picture>
   <script src="flutter_bootstrap.js" async=""></script>
-
-
-</body></html>
+</body>
+</html>
