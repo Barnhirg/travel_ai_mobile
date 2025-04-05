@@ -1,58 +1,74 @@
-<!DOCTYPE html><html><head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
+<!DOCTYPE html>
+<html>
+<head>
   <base href="/">
-
   <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="travel_ai_mobile">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Theme and PWA enhancements -->
-<meta name="theme-color" content="#0175C2">
-<meta name="msapplication-navbutton-color" content="#0175C2">
+  <!-- iOS home screen support -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Travel AI Mobile">
+<meta name="apple-mobile-web-app-title" content="Travel AI">
 <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+<!-- Theme for status bar & browser UI -->
+<meta name="theme-color" content="#0175C2">
+<meta name="msapplication-navbutton-color" content="#0175C2">
+
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- iOS meta -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Travel AI">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Theme -->
+  <meta name="theme-color" content="#0175C2">
+  <meta name="msapplication-navbutton-color" content="#0175C2">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-  <!-- Fallback favicon for legacy browsers -->
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json">
 
   <title>travel_ai_mobile</title>
-  <link rel="manifest" href="manifest.json">
+
   <style id="splash-screen-style">
     html {
-      height: 100%
+      height: 100%;
     }
 
     body {
       margin: 0;
       min-height: 100%;
       background-color: #ffffff;
-          background-size: 100% 100%;
+      background-size: 100% 100%;
+      height: calc(var(--vh, 1vh) * 100);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ffffff;
+      background-image: url('splash/img/light-2x.png');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 150px 150px;
+      z-index: 9999;
+      animation: fadeOut 1s ease 1s forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
     }
 
     .center {
@@ -65,19 +81,19 @@
     }
 
     .contain {
-      display:block;
-      width:100%; height:100%;
+      display: block;
+      width: 100%; height: 100%;
       object-fit: contain;
     }
 
     .stretch {
-      display:block;
-      width:100%; height:100%;
+      display: block;
+      width: 100%; height: 100%;
     }
 
     .cover {
-      display:block;
-      width:100%; height:100%;
+      display: block;
+      width: 100%; height: 100%;
       object-fit: cover;
     }
 
@@ -85,7 +101,6 @@
       position: absolute;
       bottom: 0;
       left: 50%;
-      -ms-transform: translate(-50%, 0);
       transform: translate(-50%, 0);
     }
 
@@ -100,27 +115,20 @@
       bottom: 0;
       right: 0;
     }
-body::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ffffff;
-  background-image: url('icons/Icon-512.png'); /* or splash/img/logo.png if you prefer */
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 150px 150px;
-  z-index: 9999;
-  animation: fadeOut 1s ease 1s forwards;
-}
 
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
+    /* Smooth scrolling + enhanced text */
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
+    /* Full mobile height fix */
+    :root {
+      --vh: 100%;
+    }
   </style>
+
   <script id="splash-screen-script">
     function removeSplashFromWeb() {
       document.getElementById("splash")?.remove();
@@ -128,9 +136,25 @@ body::before {
       document.body.style.background = "transparent";
     }
   </script>
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+
+  <!-- Mobile 100vh fix -->
+  <script>
+    function setVhUnit() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    window.addEventListener('resize', setVhUnit);
+    setVhUnit();
+  </script>
+
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async=""></script>
+  <picture id="splash">
+    <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x" media="(prefers-color-scheme: light)">
+    <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
+    <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="">
+  </picture>
+
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

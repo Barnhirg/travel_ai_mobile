@@ -75867,7 +75867,7 @@ s=p}while(true)switch(s){case 0:d=B.c.n0(m.d.a.a)
 if(J.cx(d)===0||m.r){s=1
 break}m.ao(new A.ahl(m,d))
 p=4
-l=A.hZ("http://localhost:3000/ask")
+l=A.hZ("https://travel-ai-mobile-backend.onrender.com/ask")
 g=t.N
 f=A.ap(["Content-Type","application/json"],g,g)
 s=7
