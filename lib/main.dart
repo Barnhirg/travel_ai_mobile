@@ -46,7 +46,7 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
     });
 
     try {
-      final url = Uri.parse('http://localhost:3000/ask'); // replace if hosted
+      final url = Uri.parse('https://travel-ai-mobile-backend.onrender.com/ask'); // replace if hosted
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
