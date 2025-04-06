@@ -56,7 +56,7 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          _messages.add({'role': 'ai', 'content': data['reply']});
+          _messages.add({'role': 'assistant', 'content': data['reply']});
         });
       } else {
         final error = json.decode(response.body);
