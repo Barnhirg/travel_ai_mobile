@@ -10,12 +10,13 @@ class TravelAIApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Travel AI',
+      title: 'Travel Planner AI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.grey[100],
+        useMaterial3: true,
       ),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.system,
@@ -50,33 +51,37 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({"messages": _messages}),
+        body: json.encode({'messages': _messages}),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          _messages.add({'role': 'assistant', 'content': data['reply']});
+          _messages.add({'role': 'ai', 'content': data['reply']});
         });
       } else {
         final error = json.decode(response.body);
-        _showSnackbar(error['error'] ?? 'Unexpected error');
+        _showSnackbar(error['error'] ?? 'Unexpected server error');
       }
     } catch (e) {
       _showSnackbar('Connection failed: $e');
     } finally {
       setState(() => _isLoading = false);
-      await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(Duration(milliseconds: 100));
       _scrollToBottom();
     }
   }
 
   void _scrollToBottom() {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent + 60,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent + 80,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   void _showSnackbar(String message) {
@@ -87,19 +92,21 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
 
   Widget _buildMessage(Map<String, String> message) {
     final isUser = message['role'] == 'user';
-    return Container(
+    return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-      padding: EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: isUser ? Colors.blue[400] : Colors.grey[300],
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Text(
-        message['content'] ?? '',
-        style: TextStyle(
-          color: isUser ? Colors.white : Colors.black87,
-          fontSize: 16,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+        padding: EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isUser ? Colors.blueAccent : Colors.grey[300],
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Text(
+          message['content'] ?? '',
+          style: TextStyle(
+            color: isUser ? Colors.white : Colors.black87,
+            fontSize: 16,
+          ),
         ),
       ),
     );
@@ -109,8 +116,9 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('✈️ Travel Planner AI'),
+        title: const Text('✈️ Travel Planner AI'),
         centerTitle: true,
+        elevation: 1,
       ),
       body: Column(
         children: [
@@ -120,8 +128,8 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
               itemCount: _messages.length + (_isLoading ? 1 : 0),
               itemBuilder: (context, index) {
                 if (_isLoading && index == _messages.length) {
-                  return Padding(
-                    padding: const EdgeInsets.all(12.0),
+                  return const Padding(
+                    padding: EdgeInsets.all(12.0),
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
@@ -129,9 +137,9 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
               },
             ),
           ),
-          Divider(height: 1),
+          const Divider(height: 1),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
             child: Row(
               children: [
                 Expanded(
@@ -139,17 +147,16 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
                     controller: _controller,
                     onSubmitted: (_) => _sendMessage(),
                     decoration: InputDecoration(
-                      hintText: 'Ask your travel planner...'
-                          ' (e.g., Plan a 7-day trip to Paris)',
+                      hintText: 'Ask about your trip...',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.blue),
+                  icon: const Icon(Icons.send, color: Colors.blue),
                   onPressed: _sendMessage,
                 ),
               ],
