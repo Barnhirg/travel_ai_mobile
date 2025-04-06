@@ -14,7 +14,7 @@ class TravelAIApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
-        primarySwatch: Colors.indigo,
+        primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.grey[100],
       ),
       darkTheme: ThemeData.dark(),
@@ -47,7 +47,6 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
 
     try {
       final url = Uri.parse('https://travel-ai-mobile-backend.onrender.com/ask');
-
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -73,13 +72,11 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
   }
 
   void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent + 60,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent + 60,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 
   void _showSnackbar(String message) {
@@ -95,7 +92,7 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
       margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isUser ? Colors.indigo[400] : Colors.grey[300],
+        color: isUser ? Colors.blue[400] : Colors.grey[300],
         borderRadius: BorderRadius.circular(18),
       ),
       child: Text(
@@ -142,7 +139,8 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
                     controller: _controller,
                     onSubmitted: (_) => _sendMessage(),
                     decoration: InputDecoration(
-                      hintText: 'Ask your travel planner...',
+                      hintText: 'Ask your travel planner...'
+                          ' (e.g., Plan a 7-day trip to Paris)',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -151,7 +149,7 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
                 ),
                 SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.indigo),
+                  icon: Icon(Icons.send, color: Colors.blue),
                   onPressed: _sendMessage,
                 ),
               ],
