@@ -14,7 +14,7 @@ class TravelAIApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.indigo,
         scaffoldBackgroundColor: Colors.grey[100],
       ),
       darkTheme: ThemeData.dark(),
@@ -46,11 +46,12 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
     });
 
     try {
-      final url = Uri.parse('https://travel-ai-mobile-backend.onrender.com/ask'); // replace if hosted
+      final url = Uri.parse('https://travel-ai-mobile-backend.onrender.com/ask');
+
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({"message": input}),
+        body: json.encode({"messages": _messages}),
       );
 
       if (response.statusCode == 200) {
@@ -72,11 +73,13 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
   }
 
   void _scrollToBottom() {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent + 60,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent + 60,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   void _showSnackbar(String message) {
@@ -92,7 +95,7 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
       margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isUser ? Colors.blue[400] : Colors.grey[300],
+        color: isUser ? Colors.indigo[400] : Colors.grey[300],
         borderRadius: BorderRadius.circular(18),
       ),
       child: Text(
@@ -148,7 +151,7 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
                 ),
                 SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.blue),
+                  icon: Icon(Icons.send, color: Colors.indigo),
                   onPressed: _sendMessage,
                 ),
               ],
