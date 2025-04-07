@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-void main() {
-  runApp(TravelAIApp());
-}
+void main() => runApp(TravelAIApp());
 
 class TravelAIApp extends StatelessWidget {
   @override
@@ -13,10 +11,19 @@ class TravelAIApp extends StatelessWidget {
       title: 'Travel Planner AI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        fontFamily: 'Helvetica',
         brightness: Brightness.light,
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.grey[100],
-        useMaterial3: true,
+        primarySwatch: Colors.indigo,
+        scaffoldBackgroundColor: Colors.grey[50],
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade400),
+          ),
+        ),
       ),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.system,
@@ -51,7 +58,7 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'messages': _messages}),
+        body: json.encode({"messages": _messages}),
       );
 
       if (response.statusCode == 200) {
@@ -61,52 +68,57 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
         });
       } else {
         final error = json.decode(response.body);
-        _showSnackbar(error['error'] ?? 'Unexpected server error');
+        _showSnackbar(error['error'] ?? 'Unexpected error');
       }
     } catch (e) {
       _showSnackbar('Connection failed: $e');
     } finally {
       setState(() => _isLoading = false);
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(Duration(milliseconds: 300));
       _scrollToBottom();
     }
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent + 80,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent + 100,
+      duration: Duration(milliseconds: 400),
+      curve: Curves.easeOut,
+    );
   }
 
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.redAccent,
+        duration: Duration(seconds: 3),
+      ),
     );
   }
 
   Widget _buildMessage(Map<String, String> message) {
     final isUser = message['role'] == 'user';
-    return Align(
+    return Container(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-        padding: EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: isUser ? Colors.blueAccent : Colors.grey[300],
-          borderRadius: BorderRadius.circular(18),
+      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
+      padding: EdgeInsets.all(14),
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
+      decoration: BoxDecoration(
+        color: isUser ? Colors.indigoAccent : Colors.grey[300],
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(18),
+          topRight: Radius.circular(18),
+          bottomLeft: Radius.circular(isUser ? 18 : 0),
+          bottomRight: Radius.circular(isUser ? 0 : 18),
         ),
-        child: Text(
-          message['content'] ?? '',
-          style: TextStyle(
-            color: isUser ? Colors.white : Colors.black87,
-            fontSize: 16,
-          ),
+      ),
+      child: Text(
+        message['content'] ?? '',
+        style: TextStyle(
+          color: isUser ? Colors.white : Colors.black87,
+          fontSize: 16,
+          height: 1.4,
         ),
       ),
     );
@@ -116,7 +128,7 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('✈️ Travel Planner AI'),
+        title: Text('✈️ Travel Planner AI'),
         centerTitle: true,
         elevation: 1,
       ),
@@ -125,39 +137,45 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
+              padding: EdgeInsets.symmetric(vertical: 12),
               itemCount: _messages.length + (_isLoading ? 1 : 0),
               itemBuilder: (context, index) {
                 if (_isLoading && index == _messages.length) {
-                  return const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
+                  return Center(child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: CircularProgressIndicator(),
+                  ));
                 }
                 return _buildMessage(_messages[index]);
               },
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
                     onSubmitted: (_) => _sendMessage(),
+                    textInputAction: TextInputAction.send,
                     decoration: InputDecoration(
-                      hintText: 'Ask about your trip...',
+                      hintText: 'Ask your travel planner...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.send, color: Colors.blue),
-                  onPressed: _sendMessage,
+                SizedBox(width: 10),
+                GestureDetector(
+                  onTap: _sendMessage,
+                  child: CircleAvatar(
+                    radius: 22,
+                    backgroundColor: Colors.indigo,
+                    child: Icon(Icons.send, color: Colors.white),
+                  ),
                 ),
               ],
             ),
