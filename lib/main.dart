@@ -1,8 +1,12 @@
+// main.dart — Clean version with full chat history, polish, and consistent formatting
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-void main() => runApp(TravelAIApp());
+void main() {
+  runApp(TravelAIApp());
+}
 
 class TravelAIApp extends StatelessWidget {
   @override
@@ -11,22 +15,10 @@ class TravelAIApp extends StatelessWidget {
       title: 'Travel Planner AI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Helvetica',
-        brightness: Brightness.light,
-        primarySwatch: Colors.indigo,
-        scaffoldBackgroundColor: Colors.grey[50],
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade400),
-          ),
-        ),
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[100],
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
       home: TravelChatScreen(),
     );
   }
@@ -58,7 +50,12 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({"messages": _messages}),
+        body: json.encode({
+          "messages": _messages.map((msg) => {
+            "role": msg["role"],
+            "content": msg["content"]
+          }).toList()
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -81,19 +78,15 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
 
   void _scrollToBottom() {
     _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent + 100,
-      duration: Duration(milliseconds: 400),
+      _scrollController.position.maxScrollExtent + 60,
+      duration: Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );
   }
 
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.redAccent,
-        duration: Duration(seconds: 3),
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
     );
   }
 
@@ -101,24 +94,17 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
     final isUser = message['role'] == 'user';
     return Container(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
+      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       padding: EdgeInsets.all(14),
-      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
       decoration: BoxDecoration(
-        color: isUser ? Colors.indigoAccent : Colors.grey[300],
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
-          bottomLeft: Radius.circular(isUser ? 18 : 0),
-          bottomRight: Radius.circular(isUser ? 0 : 18),
-        ),
+        color: isUser ? Colors.blue[400] : Colors.grey[300],
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Text(
         message['content'] ?? '',
         style: TextStyle(
           color: isUser ? Colors.white : Colors.black87,
           fontSize: 16,
-          height: 1.4,
         ),
       ),
     );
@@ -130,21 +116,19 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
       appBar: AppBar(
         title: Text('✈️ Travel Planner AI'),
         centerTitle: true,
-        elevation: 1,
       ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
-              padding: EdgeInsets.symmetric(vertical: 12),
               itemCount: _messages.length + (_isLoading ? 1 : 0),
               itemBuilder: (context, index) {
                 if (_isLoading && index == _messages.length) {
-                  return Center(child: Padding(
+                  return Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: CircularProgressIndicator(),
-                  ));
+                    child: Center(child: CircularProgressIndicator()),
+                  );
                 }
                 return _buildMessage(_messages[index]);
               },
@@ -152,30 +136,25 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
           ),
           Divider(height: 1),
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
                     onSubmitted: (_) => _sendMessage(),
-                    textInputAction: TextInputAction.send,
                     decoration: InputDecoration(
                       hintText: 'Ask your travel planner...',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
-                GestureDetector(
-                  onTap: _sendMessage,
-                  child: CircleAvatar(
-                    radius: 22,
-                    backgroundColor: Colors.indigo,
-                    child: Icon(Icons.send, color: Colors.white),
-                  ),
+                SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(Icons.send, color: Colors.blue),
+                  onPressed: _sendMessage,
                 ),
               ],
             ),
