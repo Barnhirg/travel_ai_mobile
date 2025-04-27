@@ -49,10 +49,7 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          "messages": _messages.map((msg) => {
-            "role": msg["role"],
-            "content": msg["content"]
-          }).toList()
+          "messages": _messages, // 👈 send the full message history
         }),
       );
 
@@ -63,10 +60,10 @@ class _TravelChatScreenState extends State<TravelChatScreen> {
         });
       } else {
         final error = json.decode(response.body);
-        _showSnackbar(error['error'] ?? 'Unexpected error');
+        _showSnackbar(error['error'] ?? 'Unexpected server error');
       }
     } catch (e) {
-      _showSnackbar('Connection failed: $e');
+      _showSnackbar('Connection error: $e');
     } finally {
       setState(() => _isLoading = false);
       await Future.delayed(Duration(milliseconds: 300));
