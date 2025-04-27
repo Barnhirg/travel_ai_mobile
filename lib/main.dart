@@ -1,5 +1,3 @@
-// main.dart — Clean version with full chat history, polish, and consistent formatting
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
